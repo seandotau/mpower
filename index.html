@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>mPower DApp</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+</head>
+<script src="https://cdn.rawgit.com/ethereum/web3.js/develop/dist/web3.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
+<script>
+web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+abi = JSON.parse('[{"constant":true,"inputs":[],"name":"lastTopupAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"getBalance","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"getBilledAmount","outputs":[{"name":"billedamount","type":"uint256"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"topupAmount","type":"uint256"}],"name":"topup","outputs":[],"payable":false,"type":"function"},{"constant":false,"inputs":[],"name":"getLastTopupAmount","outputs":[{"name":"lasttopup","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"billedAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"rateKWH","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function"},{"constant":false,"inputs":[{"name":"usageKWH","type":"uint256"}],"name":"billUser","outputs":[{"name":"usageBill","type":"uint256"}],"payable":false,"type":"function"}]')
+mpowerContract = web3.eth.contract(abi);
+// In your nodejs console, execute contractInstance.address to get the address at which the contract is deployed and change the line below to use your deployed address
+contractInstance = mpowerContract.at('0x4fe70d770ca94ee02a73f5aafb055b0c38504cc1');
+records = {"Balance": "data-1", "Last Top Up": "data-2", "Billed Amount": "data-3"}
+
+$(document).ready(function() {
+  recordNames = Object.keys(records);
+    let name = recordNames[0];
+    let val = "$"+contractInstance.getBalance.call(name).toString()
+    $("#" + records[name]).html(val);
+
+    let name1 = recordNames[1];
+    let val1 = "$"+contractInstance.getLastTopupAmount.call().toString()
+    $("#" + records[name1]).html(val1);
+
+    let name2 = recordNames[2];
+    let val2 = "$"+contractInstance.getBilledAmount.call().toString()+"/kWh"
+    $("#" + records[name2]).html(val2);
+
+});
+</script>
+<body class="container">
+  <h1>mPower Billing Portal</h1>
+  <div class="table-responsive">
+    <table class="table table-bordered">
+      
+      <tbody>
+        <tr>
+          <td>Balance</td>
+          <td id="data-1"></td>
+        </tr>
+        <tr>
+          <td>Last Top up</td>
+          <td id="data-2"></td>
+        </tr>
+        <tr>
+          <td>Billed Amount</td>
+          <td id="data-3"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+
+</html>
